@@ -34,6 +34,10 @@ public class Game : MonoBehaviour {
     private bool gameOver = false;
     [SerializeField]
     private Text deathText;
+    [SerializeField]
+    private Text boxesBurnedText;
+    private int boxesBurned = 0;
+
 
     private void Start() {
         
@@ -51,6 +55,11 @@ public class Game : MonoBehaviour {
             this.conveyor.AdjustConveyorSpeed(this.conveyorSpeedCurve.Evaluate(Time.timeSinceLevelLoad / this.secondsUntilMaxDifficulty));
             this.conveyor.AdjustConveyorKick(this.conveyorKickCurve.Evaluate(Time.timeSinceLevelLoad / this.secondsUntilMaxDifficulty));
         }
+    }
+
+    public void BoxBurned() {
+        this.boxesBurned++;
+        this.boxesBurnedText.text = "Boxes burned: " + this.boxesBurned;
     }
 
     void GameOver() {
