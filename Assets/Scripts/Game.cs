@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class Game : MonoBehaviour {
 
@@ -31,6 +32,8 @@ public class Game : MonoBehaviour {
     float secondsUntilMaxDifficulty = 300;
 
     private bool gameOver = false;
+    [SerializeField]
+    private Text deathText;
 
     private void Start() {
         
@@ -40,18 +43,29 @@ public class Game : MonoBehaviour {
         if (!player.Alive && !this.gameOver) {
             this.GameOver();
         }
-        this.spawner.AdjustMinimumSpawnTime(this.minimumBoxSpawnTimeCurve.Evaluate(Time.timeSinceLevelLoad / this.secondsUntilMaxDifficulty));
-        this.spawner.AdjustMaximumSpawnTime(this.maximumBoxSpawnTimeCurve.Evaluate(Time.timeSinceLevelLoad / this.secondsUntilMaxDifficulty));
-        this.spawner.AdjustSpawnAmount(this.boxSpawnAmountCurve.Evaluate(Time.timeSinceLevelLoad / this.secondsUntilMaxDifficulty));
-        this.conveyor.AdjustConveyorSpeed(this.conveyorSpeedCurve.Evaluate(Time.timeSinceLevelLoad / this.secondsUntilMaxDifficulty));
-        this.conveyor.AdjustConveyorKick(this.conveyorKickCurve.Evaluate(Time.timeSinceLevelLoad / this.secondsUntilMaxDifficulty));
+
+        if (!this.gameOver) {
+            this.spawner.AdjustMinimumSpawnTime(this.minimumBoxSpawnTimeCurve.Evaluate(Time.timeSinceLevelLoad / this.secondsUntilMaxDifficulty));
+            this.spawner.AdjustMaximumSpawnTime(this.maximumBoxSpawnTimeCurve.Evaluate(Time.timeSinceLevelLoad / this.secondsUntilMaxDifficulty));
+            this.spawner.AdjustSpawnAmount(this.boxSpawnAmountCurve.Evaluate(Time.timeSinceLevelLoad / this.secondsUntilMaxDifficulty));
+            this.conveyor.AdjustConveyorSpeed(this.conveyorSpeedCurve.Evaluate(Time.timeSinceLevelLoad / this.secondsUntilMaxDifficulty));
+            this.conveyor.AdjustConveyorKick(this.conveyorKickCurve.Evaluate(Time.timeSinceLevelLoad / this.secondsUntilMaxDifficulty));
+        }
     }
 
     void GameOver() {
-        Destroy(this.spawner.gameObject);
-        //get what player was killed by and change gameover text.
-        if (player.KilledBy == "burner")
         this.gameOver = true;
+
+        this.spawner.GameOver = true;
+        this.conveyor.GameOver = true;
+
+        if (player.KilledBy == "burner") {
+            this.deathText.text = "Don't stand in the fire!";
+        }
+        else if (player.KilledBy == "head") {
+            this.deathText.text = "Watch your head!";
+        }
+
         this.canvas.SetActive(true);
     }
 

@@ -4,6 +4,14 @@ using UnityEngine;
 
 public class Conveyor : MonoBehaviour {
 
+    private bool gameOver = false;
+    public bool GameOver {
+        get { return this.gameOver; }
+        set { this.gameOver = value; }
+    }
+    [SerializeField]
+    private float crazySpeed = 10f;
+
     [SerializeField]
     private float minimumBeltSpeed = 1f;
     public float MinimumBeltSpeed {
@@ -66,7 +74,7 @@ public class Conveyor : MonoBehaviour {
         foreach (Transform child in transform) {
             if (child.tag == "Box") {
                 Box box = child.gameObject.GetComponent<Box>();
-                box.Throw(Vector2.zero, new Vector2(this.beltSpeed, box.GetVelocity().y));
+                box.Throw(Vector2.zero, new Vector2(this.GameOver ? this.crazySpeed:this.beltSpeed, box.GetVelocity().y));
             }
         }
     }

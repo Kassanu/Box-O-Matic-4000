@@ -71,17 +71,43 @@ public class BoxSpawner : MonoBehaviour {
         }
     }
 
+    private bool gameOver = false;
+    public bool GameOver {
+        get { return this.gameOver; }
+        set { this.gameOver = value; }
+    }
+
+    [SerializeField]
+    private int boxesToSpawnAtEnd = 10;
+
+    private IEnumerator spawnBoxCoroutine;
+
     private void Start() {
-        StartCoroutine(RepeatedlySpawnBoxes());
+        this.spawnBoxCoroutine = RepeatedlySpawnBoxes();
+        StartCoroutine(this.spawnBoxCoroutine);
+    }
+
+    private void Update() {
+        if (this.GameOver) {
+            StopCoroutine(this.spawnBoxCoroutine);
+            while (this.boxesToSpawnAtEnd > 0) {
+                int amount = Random.Range(this.minAmountToSpawn, this.maxAmountToSpawn + 1);
+                this.InstantiateBoxes(amount);
+                this.boxesToSpawnAtEnd -= amount;
+            }
+        }
     }
 
     IEnumerator RepeatedlySpawnBoxes() {
         while (true) {
-            int amtToSpawn = Random.Range(this.minAmountToSpawn, this.maxAmountToSpawn+1);
-            for (int i = 0; i < amtToSpawn; i++) {
-                Instantiate(this.boxPrefab, new Vector3(this.transform.position.x, this.transform.position.y+(i*1), this.transform.position.z), Quaternion.identity, this.transform.parent);
-            }
+            this.InstantiateBoxes(Random.Range(this.minAmountToSpawn, this.maxAmountToSpawn+1));
             yield return new WaitForSeconds(Random.Range(this.CurrentMinimumSpawnTime, this.CurrentMaximumSpawnTime));
+        }
+    }
+
+    private void InstantiateBoxes(int amount) {
+        for (int i = 0; i < amount; i++) {
+            Instantiate(this.boxPrefab, new Vector3(this.transform.position.x, this.transform.position.y + ( i * 1 ), this.transform.position.z), Quaternion.identity, this.transform.parent);
         }
     }
 
