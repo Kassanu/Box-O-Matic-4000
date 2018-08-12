@@ -4,13 +4,19 @@ using UnityEngine;
 
 public class KickBoxFromConveyor : MonoBehaviour {
 
+    [SerializeField]
+    Conveyor conveyor;
+
     void OnTriggerEnter2D(Collider2D collision) {
         if (collision.tag == "Box") {
             Box box = collision.gameObject.GetComponent<Box>();
             if (box.OnConveyor) {
                 box.OnConveyor = false;
                 box.transform.SetParent(null);
-                box.Throw(Random.Range(0f, 3f));
+                float ks = conveyor.RandomKickStrength();
+                Debug.Log("kicking");
+                Debug.Log("Stren: " + ks);
+                box.Throw(new Vector2(ks, 0));
             }
         }
     }

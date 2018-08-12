@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class Box : MonoBehaviour {
 
-    public Player player;
     private bool isHeld = false;
     public bool IsHeld {
         get { return this.isHeld; }
@@ -45,25 +44,28 @@ public class Box : MonoBehaviour {
         this.Highlight = false;
     }
 
-    void Update() {
-        //Debug.Log(this.gameObject.name + ": Left or Right = " + this.LeftOrRight(player.transform.position, transform.position));
-       // Debug.Log(this.gameObject.name + ": Distance = " + Vector2.Distance(player.transform.position, transform.position));
-    }
-
     public float LeftOrRight(Vector2 A, Vector2 B) {
         return A.x * -B.y + A.y * B.x;
     }
 
-    public void Throw(float throwForce, Vector2 velocity) {
-        this.rb2d.velocity = velocity;
-        this.rb2d.AddForce(new Vector2(throwForce,0), ForceMode2D.Impulse);
+    public void Throw(Vector2 throwForce, Vector2 velocity) {
+        if (this.rb2d != null) {
+            this.rb2d.velocity = velocity;
+            this.rb2d.AddForce(throwForce, ForceMode2D.Impulse);
+        }
     }
 
-    internal void Throw(float throwForce) {
-        this.rb2d.AddForce(new Vector2(throwForce, 0), ForceMode2D.Impulse);
+    public void Throw(Vector2 throwForce) {
+        if (this.rb2d != null) {
+            this.rb2d.AddForce(throwForce, ForceMode2D.Impulse);
+        }
     }
 
     public Vector2 GetVelocity() {
-        return this.rb2d.velocity;
+        if (this.rb2d != null) {
+            return this.rb2d.velocity;
+        }
+
+        return Vector2.zero;
     }
 }

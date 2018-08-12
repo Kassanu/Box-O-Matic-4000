@@ -4,9 +4,61 @@ using UnityEngine;
 
 public class Conveyor : MonoBehaviour {
 
-    public float beltSpeed = 1f;
+    [SerializeField]
+    private float minimumBeltSpeed = 1f;
+    public float MinimumBeltSpeed {
+        get { return this.minimumBeltSpeed; }
+        set { this.minimumBeltSpeed = value; }
+    }
 
-	void Start () {
+    [SerializeField]
+    private float maximumBeltSpeed = 2f;
+    public float MaximumBeltSpeed {
+        get { return this.maximumBeltSpeed; }
+        set { this.maximumBeltSpeed = value; }
+    }
+
+    private float beltSpeed = 1f;
+    public float BeltSpeed {
+        get { return this.beltSpeed; }
+        set {
+            this.beltSpeed = ((value < this.MinimumBeltSpeed ) ? this.MinimumBeltSpeed : ((value > this.MaximumBeltSpeed) ? this.MaximumBeltSpeed : value));
+        }
+    }
+
+    public float minKickStrength = 1f;
+
+    
+    [SerializeField]
+    private float minimumKickStrength = 1f;
+    public float MinimumKickStrength {
+        get { return this.minimumKickStrength; }
+        set { this.minimumKickStrength = value; }
+    }
+
+    [SerializeField]
+    private float defaultMaximumKickStrength = 2f;
+    public float DefaultMaximumKickStrength {
+        get { return this.defaultMaximumKickStrength; }
+        set { this.defaultMaximumKickStrength = value; }
+    }
+
+    [SerializeField]
+    private float maximumKickStrength = 1f;
+    public float MaximumKickStrength {
+        get { return this.maximumKickStrength; }
+        set { this.maximumKickStrength = value; }
+    }
+
+    private float currentMaximumKickStrength = 2f;
+    public float CurrentMaximumKickStrength {
+        get { return this.currentMaximumKickStrength; }
+        set {
+            this.currentMaximumKickStrength = ( ( value < this.minKickStrength ) ? this.minKickStrength : ( ( value > this.MaximumKickStrength ) ? this.MaximumKickStrength : value ) );
+        }
+    }
+
+    void Start () {
 		
 	}
 	
@@ -14,8 +66,21 @@ public class Conveyor : MonoBehaviour {
         foreach (Transform child in transform) {
             if (child.tag == "Box") {
                 Box box = child.gameObject.GetComponent<Box>();
-                box.Throw(0, new Vector2(this.beltSpeed, box.GetVelocity().y));
+                box.Throw(Vector2.zero, new Vector2(this.beltSpeed, box.GetVelocity().y));
             }
         }
     }
+
+    public float RandomKickStrength() {
+        return Random.Range(this.MinimumKickStrength, this.CurrentMaximumKickStrength);
+    }
+
+    public void AdjustConveyorSpeed(float percentage) {
+        this.BeltSpeed = this.MinimumBeltSpeed + ((this.MaximumBeltSpeed - this.MinimumBeltSpeed) * percentage);
+    }
+
+    public void AdjustConveyorKick(float percentage) {
+        this.CurrentMaximumKickStrength = this.DefaultMaximumKickStrength + ( ( this.MaximumKickStrength - this.DefaultMaximumKickStrength ) * percentage );
+    }
+
 }
